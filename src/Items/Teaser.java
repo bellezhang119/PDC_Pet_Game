@@ -9,25 +9,26 @@ package Items;
  *
  * @author Belle Zhang
  */
-public class StuffedToy extends Toy{
-
-    //Constructor for creating a new Stuffed toy
-    public StuffedToy() {
+public class Teaser extends Toy {
+    
+    //Constructor for creating a new Teaser
+    public Teaser() {
         super();
         this.moodEffect = 20;
-        this.ID = 3;
+        this.durability = 30;
+        this.ID = 4;
     }
-
+    
     //Constructor for loading save file
-    public StuffedToy(int durability) {
+    public Teaser(int durability) {
         super(durability);
         this.moodEffect = 20;
-        this.ID = 3;
+        this.ID = 4;
     }
-
-    //toString for Stuffed toy
+    
+    //toString for Teaser
     @Override
     public String toString() {
-        return "Stuffed Toy";
+        return "Teaser";
     }
 }

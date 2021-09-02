@@ -9,25 +9,28 @@ package Items;
  *
  * @author Belle Zhang
  */
-public class StuffedToy extends Toy{
-
-    //Constructor for creating a new Stuffed toy
-    public StuffedToy() {
+public class Cookie extends Food {
+    
+    //Constructor for creating a new Cookie
+    public Cookie() {
         super();
-        this.moodEffect = 20;
-        this.ID = 3;
+        this.price = 1;
+        this.hungerEffect = 5;
+        this.durability = 1;
+        this.ID = 5;
     }
-
+    
     //Constructor for loading save file
-    public StuffedToy(int durability) {
+    public Cookie(int durability) {
         super(durability);
-        this.moodEffect = 20;
-        this.ID = 3;
+        this.price = 1;
+        this.hungerEffect = 5;
+        this.ID = 5;
     }
-
-    //toString for Stuffed toy
+    
+    //toString for Cookie
     @Override
     public String toString() {
-        return "Stuffed Toy";
+        return "Cookie";
     }
 }

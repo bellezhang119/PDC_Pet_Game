@@ -100,6 +100,15 @@ public interface FileIO {
                     case 3:
                         player.getPetList().add(new Hamster(line[2], Integer.parseInt(line[3]),
                                 Integer.parseInt(line[4]), Integer.parseInt(line[5]), Integer.parseInt(line[6])));
+                        break;
+                    case 4:
+                        player.getPetList().add(new Horse(line[2], Integer.parseInt(line[3]),
+                                Integer.parseInt(line[4]), Integer.parseInt(line[5]), Integer.parseInt(line[6])));
+                        break;
+                    case 5:
+                        player.getPetList().add(new Chinchilla(line[2], Integer.parseInt(line[3]),
+                                Integer.parseInt(line[4]), Integer.parseInt(line[5]), Integer.parseInt(line[6])));
+                        break;
                 }
             } else if (line[0].equals("[item]")) {
                 switch(Integer.parseInt(line[1])) {
@@ -113,6 +122,17 @@ public interface FileIO {
                         break;
                     case 3:
                         player.getInventory().add(new StuffedToy(Integer.parseInt(line[2])));
+                        break;
+                    case 4:
+                        player.getInventory().add(new Teaser(Integer.parseInt(line[2])));
+                        break;
+                    case 5:
+                        player.getInventory().add(new Cookie(Integer.parseInt(line[2])));
+                        break;
+                    case 6:
+                        player.getInventory().add(new Cookie(Integer.parseInt(line[2])));
+                        break;
+                 
                 }
             }
         }
