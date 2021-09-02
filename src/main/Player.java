@@ -155,6 +155,7 @@ public class Player {
         pet.setBond(pet.getBond() + toy.getBondEffect());
         toy.setDurability(toy.getDurability() - 1);
         pet.setHunger(pet.getHunger() - 10);
+        //Removes toy is durability is 0
         if (toy.getDurability() <= 0) {
             inventory.remove(toy);
         }
@@ -167,6 +168,7 @@ public class Player {
         pet.setMoodCount(pet.getMoodCount() + food.getMoodEffect());
         pet.setBond(pet.getBond() + food.getBondEffect());
         food.setDurability(food.getDurability() - 1);
+        //Removes food if durability is 0
         if (food.getDurability() <= 0) {
             inventory.remove(food);
         }
@@ -176,6 +178,7 @@ public class Player {
     //Prints stats of player
     public void printStats() {
         System.out.println("Player: " + name);
+        System.out.println("Balance: " + money);
         System.out.println("Pet list:");
         System.out.println(petList);
         System.out.println("Inventory:");

@@ -74,7 +74,7 @@ public interface FileIO {
 
     //Method for loading save by reading an arrayList of arrays of strings and
     //loading information onto an instance of a player
-    static Player loadSave(ArrayList<String[]> content) throws NumberFormatException {
+    static Player loadSave(ArrayList<String[]> content) throws IndexOutOfBoundsException, NumberFormatException {
         //Sets player name to first line of txt file
         Player player = new Player(content.get(0)[0]);
         content.remove(0); //Removing first line
