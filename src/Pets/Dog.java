@@ -21,6 +21,16 @@ public class Dog extends Pet {
         this.ID = 1;
     }
 
+    //Constructor for creating a new dog
+    public Dog() {
+        this.name = "UNKNOWN";
+        this.health = 100;
+        this.hunger = 80;
+        this.bond = 10;
+        this.moodCount = 70;
+        this.ID = 1;
+    }
+
     //Constructor for loading save file
     public Dog (String name, int health, int hunger, int bond, int moodCount) {
         super(name, health, hunger, bond, moodCount);

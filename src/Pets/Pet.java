@@ -178,6 +178,27 @@ public abstract class Pet {
         System.out.println("Mood: " + getMood());
     }
 
+    public String petStats() {
+        String output = name + " (" + this.getClass().getSimpleName() + "):\n";
+
+        output += "Health: (" + getHealth() + "%)\n";
+        for (int i = 0; i < getHealth(); i+=2) {
+            output += "|";
+        }
+        output += "\nHunger: (" + getHunger() + "%)\n";
+
+        for (int i = 0; i < getHunger(); i+=2) {
+            output += "|";
+        }
+
+        output += "\nBond: (" + getBond() + "%)\n";
+        for (int i = 0; i < getBond(); i+=2) {
+            output += "|";
+        }
+        output += "\nMood: " + getMood();
+        return output;
+    }
+
     //toString for pet including pet name
     @Override
     public String toString() {

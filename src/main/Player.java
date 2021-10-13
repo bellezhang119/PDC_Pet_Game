@@ -18,6 +18,8 @@ public class Player {
     private String name;
     private ArrayList<Pet> petList; //A list of pets player owns
     private ArrayList<Item> inventory; //A list of items player owns
+    public final int PET_LIST_SIZE = 10;
+    public final int INVENTORY_SIZE = 10;
     private double money;
 
 //    public Player() {
@@ -30,6 +32,13 @@ public class Player {
     //Constructor
     public Player(String name) {
         this.name = name;
+        this.petList = new ArrayList<>();
+        this.inventory = new ArrayList<>();
+        this.money = 10.0;
+    }
+
+    public Player() {
+        this.name = null;
         this.petList = new ArrayList<>();
         this.inventory = new ArrayList<>();
         this.money = 10.0;
@@ -61,8 +70,13 @@ public class Player {
     }
 
     //Add method for petList
-    public void addPet(Pet pet) {
-        petList.add(pet);
+    public boolean addPet(Pet pet) {
+        if (petList.size() <= PET_LIST_SIZE) {
+            petList.add(pet);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     //Remove method for petList using index
@@ -118,7 +132,9 @@ public class Player {
     //Method for purchasing item for player
     public boolean purchaseItem(Item item) {
         //Checks if player has enough money to buy item
-        if (getMoney() >= item.getPrice()) {
+        if (inventory.size() >= INVENTORY_SIZE) {
+            return false; //Returns false if inventory has reached max capacity
+        } else if (getMoney() >= item.getPrice()) {
             setMoney(getMoney() - item.getPrice());
             addItem(item);
             return true; //Returns true if item is bought
@@ -169,9 +185,7 @@ public class Player {
         pet.setBond(pet.getBond() + food.getBondEffect());
         food.setDurability(food.getDurability() - 1);
         //Removes food if durability is 0
-        if (food.getDurability() <= 0) {
-            inventory.remove(food);
-        }
+        inventory.remove(food);
         this.money+=10;
     }
 

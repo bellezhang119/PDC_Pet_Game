@@ -21,6 +21,16 @@ public class Hamster extends Pet {
         this.ID = 3;
     }
 
+    //Constructor for creating a new hamster
+    public Hamster() {
+        this.name = "UNKNOWN";
+        this.health = 100;
+        this.hunger = 80;
+        this.bond = 0;
+        this.moodCount = 50;
+        this.ID = 3;
+    }
+
     //Constructor for loading save file
     public Hamster(String name, int health, int hunger, int bond, int moodCount) {
         super(name, health, hunger, bond, moodCount);

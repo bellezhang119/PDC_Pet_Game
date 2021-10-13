@@ -20,6 +20,16 @@ public class Chinchilla extends Pet {
         this.moodCount = 50;
         this.ID = 5;
     }
+
+    //Constructor for creating a new chinchilla
+    public Chinchilla() {
+        this.name = "UNKNOWN";
+        this.health = 100;
+        this.hunger = 80;
+        this.bond = 0;
+        this.moodCount = 50;
+        this.ID = 5;
+    }
     
     public Chinchilla(String name, int health, int hunger, int bond, int moodCount) {
         super(name, health, hunger, bond, moodCount);

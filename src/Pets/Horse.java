@@ -20,6 +20,16 @@ public class Horse extends Pet {
         this.moodCount = 50;
         this.ID = 4;
     }
+
+    //Constructor for creating a new horse
+    public Horse() {
+        this.name = "UNKNOWN";
+        this.health = 100;
+        this.hunger = 80;
+        this.bond = 0;
+        this.moodCount = 50;
+        this.ID = 4;
+    }
     
     //Constructor for loading save file
     public Horse(String name, int health, int hunger, int bond, int moodCount) {
