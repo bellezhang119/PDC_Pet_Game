@@ -23,7 +23,7 @@ import main.Player;
 
 /*
  * This class is for connecting to derby embedded database, creating tables 
-   and inserting data.
+ * and inserting data.
  */
 
 /**
@@ -120,11 +120,13 @@ public class DBConnection {
         String save = player.getName() + "\n";
         save += player.getMoney() + "\n";
         
+        //Inserting pet information
         for (Pet pet : player.getPetList()) {
             save += "[pet]" + " " + pet.getID() + " " + pet.getName() + " " + pet.getHealth() + " "
                         + pet.getHunger() + " " + pet.getBond() + " " + pet.getMoodCount() + "\n";
         }
         
+        //Inserting inventory information
         for (Item item : player.getInventory()) {
             save += "[item]" + " " + item.getID() + " " + item.getDurability() + "\n";
         }
@@ -146,7 +148,9 @@ public class DBConnection {
         try {
             ResultSet rs = statement.executeQuery("SELECT * FROM save");
             while (rs.next()) {
+                //If input username exists in database
                 if (rs.getString("username").equals(username)) {
+                    //Get save
                     save = rs.getString("file");
                 }
             }
@@ -154,6 +158,7 @@ public class DBConnection {
             System.out.println(e);
         }
         
+        //Unpacking save
         ArrayList<String> content = new ArrayList<>(Arrays.asList(save.split("\\r?\\n")));
         Player player = new Player(content.get(0));
         content.remove(0);
@@ -217,6 +222,7 @@ public class DBConnection {
         return player;
     }
 
+    //Main method for testing connectivity of database and inserting/retrieving data
     public static void main(String[] args) throws SQLException {
         DBConnection connection = new DBConnection();
         connection.insertPlayer("John", "123");

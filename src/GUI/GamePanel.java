@@ -9,6 +9,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+/**
+ * This panel is the main game panel which is the actual game content, controlling
+ * interactions with player pets and inventories while having some other
+ * functions like saving the game.
+ * 
+ * @author Belle Zhang
+ */
 
 public class GamePanel extends JPanel implements FileIO {
     private MainFrame frame;
@@ -22,30 +32,46 @@ public class GamePanel extends JPanel implements FileIO {
     private GeneralListener generalListener;
     private ManageListener manageListener;
     private InteractListener interactListener;
+    private ItemChangeListener changeListener;
     GroupLayout westGP;
     GroupLayout eastGP;
     private ShopPanel shopPanel;
     private SavePanel savePanel;
     private ManagePetPanel managePetPanel;
 
-
+    //Constructor for gamePanel
     public GamePanel(MainFrame frame, Player player) {
         this.frame = frame;
         this.player = player;
         setLayout(new BorderLayout(10, 10));
         setPreferredSize(new Dimension(600, 500));
-
+        changeListener = new ItemChangeListener();
+        
+        //Container panels for borderLayout
         westPanel = new JPanel();
         southPanel = new JPanel();
         eastPanel = new JPanel();
 
+        //petBox which is a JComboBox that contains the petList of player
         playerInfo = new JLabel();
         petBox = new JComboBox<>();
+        for (Pet pet : player.getPetList()) {
+            petBox.addItem(pet);
+        }
 
+        //inventoryBox which is a JComboBox that contains the inventory of player
         petInfo = new JTextArea();
         petInfo.setSize(50, 50);
         inventoryBox = new JComboBox<>();
         
+        for (Item item : player.getInventory()) {
+            inventoryBox.addItem(item);
+        }
+        
+        petBox.addItemListener(changeListener);
+        inventoryBox.addItemListener(changeListener);
+        
+        //Custom ActionListener classes for different sets of buttons
         generalListener = new GeneralListener();
         manageListener = new ManageListener();
         interactListener = new InteractListener();
@@ -73,6 +99,7 @@ public class GamePanel extends JPanel implements FileIO {
         add(playerInfo, BorderLayout.NORTH);
         add(petInfo, BorderLayout.CENTER);
         
+        //Using group layout to set locations of components in westPanel and eastPanel
         westGP = new GroupLayout(westPanel);
         westPanel.setLayout(westGP);
         westGP.setHorizontalGroup(westGP.createSequentialGroup()
@@ -121,17 +148,12 @@ public class GamePanel extends JPanel implements FileIO {
         update();
     }
 
+    //Update method for updating information in playerInfo, petInfo and JComboBoxes
+    //when there's an action
     public void update() {
         String text = "Player: " + player.getName() + " Balance: " + player.getMoney();
         playerInfo.setText(text);
-        petBox.removeAllItems();
-        for (Pet p : player.getPetList()) {
-            petBox.addItem(p);
-        }
-        inventoryBox.removeAllItems();
-        for (Item i : player.getInventory()) {
-            inventoryBox.addItem(i);
-        }
+
         if (petBox.getSelectedIndex() != -1) {
             Pet pet = (Pet) petBox.getSelectedItem();
             petInfo.setText(pet.petStats());
@@ -153,16 +175,32 @@ public class GamePanel extends JPanel implements FileIO {
                             .addComponent(use))
         );
     }
+    
+    //ItemListener for petBox and inventoryBox
+    private class ItemChangeListener implements ItemListener {
 
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            update();
+        }
+    }
+
+    //ActionListener for buttons use, save and quit
     private class GeneralListener implements ActionListener {
+        //If use button is clicked, and both petBox and inventoryBox have valid
+        //selections, use item on pet
+        //Is save button is clicked, switch to savePanel
+        //If quit button is clicked, switch to mainMenuPanel
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == use) {
                 if (inventoryBox.getSelectedIndex() != -1 && petBox.getSelectedIndex() != -1) {
                     if (inventoryBox.getSelectedItem() instanceof Toy) {
                         player.play((Pet) petBox.getSelectedItem(), (Toy) inventoryBox.getSelectedItem());
+                        inventoryBox.removeItemAt(inventoryBox.getSelectedIndex());
                     } else if (inventoryBox.getSelectedItem() instanceof Food) {
                         player.feed((Pet) petBox.getSelectedItem(), (Food) inventoryBox.getSelectedItem());
+                        inventoryBox.removeItemAt(inventoryBox.getSelectedIndex());
                     }
                 }
             } else if (e.getSource() == save) {
@@ -175,7 +213,10 @@ public class GamePanel extends JPanel implements FileIO {
         }
     }
 
+    //ActionListener for buttons shop, managePet
     private class ManageListener implements ActionListener {
+        //If shop is clicked, switch panel to shopPanel
+        //If managePet is clicked, switch panel to managePetPanel
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == shop) {
@@ -189,7 +230,12 @@ public class GamePanel extends JPanel implements FileIO {
         }
     }
 
+    //ActionListener for buttons pet, scold and play
     private class InteractListener implements ActionListener {
+        //If petBox has valid selection
+        //If pet button is clicked, using player pet() on selected pet
+        //If scold button is clicked, using player scold() on seleted pet
+        //Is play button is clicked, using player play() on selected pet
         @Override
         public void actionPerformed(ActionEvent e) {
             if (petBox.getSelectedIndex() != -1) {
@@ -206,7 +252,7 @@ public class GamePanel extends JPanel implements FileIO {
         }
     }
 
-
+    //Shop panel for player purchasing items
     private class ShopPanel extends JPanel implements ActionListener {
         private GroupLayout gp;
         private JLabel playerInfo;
@@ -214,11 +260,14 @@ public class GamePanel extends JPanel implements FileIO {
         private JButton buy, back;
         private JLabel warning;
 
+        //Constructor for shopPanel
         public ShopPanel() {
             gp = new GroupLayout(this);
             setLayout(gp);
             String text = "Player: " + player.getName() + " Balance: " + player.getMoney();
             playerInfo = new JLabel(text);
+            
+            //itemBox with a selection of all the items available for purchase
             itemBox = new JComboBox<>();
             itemBox.addItem("1. Ball");
             itemBox.addItem("2. Cookie");
@@ -232,6 +281,8 @@ public class GamePanel extends JPanel implements FileIO {
             back.addActionListener(this);
             warning = new JLabel("You don't have enough money or your inventory is full");
             warning.setForeground(Color.RED);
+            
+            //Using group layout to set locations of components
             gp.setHorizontalGroup(gp.createSequentialGroup()
                     .addGroup(gp.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(playerInfo)
@@ -257,6 +308,10 @@ public class GamePanel extends JPanel implements FileIO {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            String text = "Player: " + player.getName() + " Balance: " + player.getMoney();
+            playerInfo.setText(text);
+            //If buy button is clicked, check selected index of itemBox
+            //Using switch case to add new item to player inventory
             if (e.getSource() == buy) {
                 int index = itemBox.getSelectedIndex();
                 Item item = new Ball();
@@ -280,11 +335,16 @@ public class GamePanel extends JPanel implements FileIO {
                         break;
                 }
                 boolean purchase = player.purchaseItem(item);
+                //If purchase is successful undisplay warning
+                //Else display warning
                 if (purchase) {
                     warning.setVisible(false);
+                    inventoryBox.addItem(item);
+                    text = "Player: " + player.getName() + " Balance: " + player.getMoney();
+                    playerInfo.setText(text);
                 } else {
                     warning.setVisible(true);
-                }
+                }//If back button is clicked, switch panel to gamePanel
             } else if (e.getSource() == back) {
                 frame.getCard().show(frame.getContPanel(), "4");
             }
@@ -292,19 +352,23 @@ public class GamePanel extends JPanel implements FileIO {
         }
     }
 
+    //ManagePetPanel is for managing pets (removing and adding)
     private class ManagePetPanel extends JPanel implements ActionListener {
         private GroupLayout gp;
-        private JComboBox<Pet> managePetBox;
+        private JLabel managePet;
         private JComboBox<String> addPetBox;
         private JTextField nameField;
         private JButton add, remove, back;
         private JLabel warning1, warning2;
 
+        //Constructor for managePetPanel
         public ManagePetPanel() {
             gp = new GroupLayout(this);
             setLayout(gp);
 
-            managePetBox = GamePanel.this.petBox;
+            //addPetBox is a JComboBox which contains every available pet
+            //that can be added to player's pet list
+            managePet = new JLabel("Remove current selected pet:");
             addPetBox = new JComboBox<>();
             addPetBox.addItem("1. Dog");
             addPetBox.addItem("2. Cat");
@@ -326,9 +390,10 @@ public class GamePanel extends JPanel implements FileIO {
             warning2.setForeground(Color.RED);
             warning2.setVisible(false);
             
+            //Using group layout to set locations of 
             gp.setHorizontalGroup(gp.createSequentialGroup()
                     .addGroup(gp.createParallelGroup(GroupLayout.Alignment.LEADING)
-                            .addComponent(managePetBox)
+                            .addComponent(managePet)
                             .addComponent(remove)
                             .addComponent(addPetBox)
                             .addComponent(nameField)
@@ -340,7 +405,7 @@ public class GamePanel extends JPanel implements FileIO {
 
             gp.setVerticalGroup(gp.createSequentialGroup()
                     .addGroup(gp.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                            .addComponent(managePetBox))
+                            .addComponent(managePet))
                     .addGroup(gp.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(remove))
                     .addGroup(gp.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -360,7 +425,8 @@ public class GamePanel extends JPanel implements FileIO {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            this.managePetBox = GamePanel.this.petBox;
+            //If add button is clicked, get index of selected item, 
+            //using switch case to add new pet to player's petList
             if (e.getSource() == add) {
                 warning1.setVisible(false);
                 warning2.setVisible(false);
@@ -384,7 +450,10 @@ public class GamePanel extends JPanel implements FileIO {
                             break;
                     }
                     boolean success = player.addPet(pet);
+                    //If pet is successfully added, switch to gamePanel
+                    //Else display warning
                     if (success) {
+                        petBox.addItem(pet);
                         frame.getCard().show(frame.getContPanel(), "4");
                         GamePanel.this.update();
                     } else {
@@ -392,15 +461,17 @@ public class GamePanel extends JPanel implements FileIO {
                     }
                 } else {
                     warning1.setVisible(true);
-                }
+                }//If remove button is clicked and petBox selection is not null
+                //Remove pet from petList and petBox
             } else if (e.getSource() == remove) {
-                if (managePetBox.getSelectedIndex() != -1) {
-                    Pet pet = (Pet) managePetBox.getSelectedItem();
+                if (petBox.getSelectedIndex() != -1) {
+                    Pet pet = (Pet) petBox.getSelectedItem();
                     player.removePet(pet);
+                    petBox.removeItemAt(petBox.getSelectedIndex());
                     frame.getCard().show(frame.getContPanel(), "4");
                     GamePanel.this.update();
-                }
-            }    else if (e.getSource() == back) {
+                }//If back button is clicked, switch panel to gamePanel
+            } else if (e.getSource() == back) {
                 
                 frame.getCard().show(frame.getContPanel(), "4");
                 GamePanel.this.update();
@@ -408,12 +479,14 @@ public class GamePanel extends JPanel implements FileIO {
         }
     }
 
+    //SavePanel for player to save their current game to the database
     private class SavePanel extends JPanel implements ActionListener {
         private GroupLayout gp;
         private JButton save, back;
         private JTextField nameField;
         private JLabel message, warning;
 
+        //Constructor for savePanel
         public SavePanel() {
             gp = new GroupLayout(this);
             setLayout(gp);
@@ -429,6 +502,7 @@ public class GamePanel extends JPanel implements FileIO {
             warning = new JLabel("Please enter a valid name");
             warning.setForeground(Color.RED);
 
+            //Using group layout to set locations of components
             gp.setHorizontalGroup(gp.createSequentialGroup()
                     .addGroup(gp.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(message)
@@ -451,24 +525,23 @@ public class GamePanel extends JPanel implements FileIO {
             warning.setVisible(false);
         }
 
-        public void displayWarning() {
-            warning.setVisible(true);
-        }
-
         @Override
         public void actionPerformed(ActionEvent e) {
+            //If save button is clicked, and nameField is no empty, get player's
+            //username, save name and the game to save to database
+            //If name field is empty, display warning
             try {
                 if (e.getSource() == save) {
                     String name = "";
                     name = nameField.getText();
                     if (name.equals("")) {
-                        displayWarning();
+                        warning.setVisible(true);
                     } else {
                         frame.getConnection().save(frame.getUsername(), name, player);
                         nameField.setText("");
                         warning.setVisible(false);
                         frame.getCard().show(frame.getContPanel(), "4");
-                    }
+                    }//If back button is pressed, switch panel to gamePanel
                 } else if (e.getSource() == back) {
                     nameField.setText("");
                     warning.setVisible(false);

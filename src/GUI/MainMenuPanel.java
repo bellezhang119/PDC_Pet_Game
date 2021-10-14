@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
 import main.Player;
@@ -16,9 +11,11 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 /**
- *
+ * This panel is the main menu panel in GUI which controls creating new games,
+ * loading saves, going into game panel, and quitting the program
  * @author Belle Zhang
  */
+
 public class MainMenuPanel extends JPanel implements ActionListener, FileIO {
     private GroupLayout gp;
     private JButton newGame, loadGame, quit;
@@ -30,6 +27,7 @@ public class MainMenuPanel extends JPanel implements ActionListener, FileIO {
     private MainFrame frame;
     private Player player;
 
+    //Constructor for mainMenuPanel
     public MainMenuPanel(Player player, MainFrame frame) {
         gp = new GroupLayout(this);
         setLayout(gp);
@@ -50,6 +48,7 @@ public class MainMenuPanel extends JPanel implements ActionListener, FileIO {
         loadGame.setSize(110, 40);
         quit.setSize(110, 40);
 
+        //Using group layout to set locations of components
         gp.setHorizontalGroup(gp.createSequentialGroup()
                 .addGroup(gp.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(newGame, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -67,6 +66,9 @@ public class MainMenuPanel extends JPanel implements ActionListener, FileIO {
         );
     }
 
+    //When newGame button is clicked, switch to new game panel
+    //When loadGame button is clicked, switch to load game panel
+    //When quit button is clicked, quit program
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == newGame) {
@@ -80,13 +82,14 @@ public class MainMenuPanel extends JPanel implements ActionListener, FileIO {
         }
     }
 
-
+    //This panel is for creating new games
     private class NewGamePanel extends JPanel implements ActionListener {
         private GroupLayout gp;
         private JButton ok, back;
         private JTextField nameField;
         private JLabel message, warning;
 
+        //Constructor for creating newGamePanel
         public NewGamePanel() {
             gp = new GroupLayout(this);
             setLayout(gp);
@@ -102,7 +105,8 @@ public class MainMenuPanel extends JPanel implements ActionListener, FileIO {
             message = new JLabel("Enter a name for new player");
             warning = new JLabel("Please enter a valid name");
             warning.setForeground(Color.RED);
-
+            
+            //Using group layout to set locations of components
             gp.setHorizontalGroup(gp.createSequentialGroup()
                     .addGroup(gp.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(message)
@@ -128,17 +132,16 @@ public class MainMenuPanel extends JPanel implements ActionListener, FileIO {
             warning.setVisible(false);
         }
 
-        public void displayWarning() {
-            warning.setVisible(true);
-        }
-
         @Override
         public void actionPerformed(ActionEvent e) {
+            //If ok button is clicked, and nameField is not empty, make a new
+            //player with the name, and switch panel to gamePanel.
+            //If nameField is empty, display warning.
             if (e.getSource() == ok) {
                 String name = "";
                 name = nameField.getText();
                 if (name.equals("")) {
-                    displayWarning();
+                    warning.setVisible(true);
                 } else {
                     player = new Player(name);
                     nameField.setText("");
@@ -146,7 +149,7 @@ public class MainMenuPanel extends JPanel implements ActionListener, FileIO {
                     gamePanel = new GamePanel(frame, player);
                     frame.getContPanel().add(gamePanel, "4");
                     frame.getCard().show(frame.getContPanel(), "4");
-                }
+                }//If back button is clicked, switch panel to mainMenuPanel
             } else if (e.getSource() == back) {
                 nameField.setText("");
                 warning.setVisible(false);
@@ -155,12 +158,14 @@ public class MainMenuPanel extends JPanel implements ActionListener, FileIO {
         }
     }
 
+    //This panel is for loading games from database
     private class LoadGamePanel extends JPanel implements ActionListener {
         private GroupLayout gp;
         private JButton ok, back;
         private JTextField nameField;
         private JLabel message, warning;
 
+        //Constructor for loadGamePanel
         public LoadGamePanel() {
             gp = new GroupLayout(this);
             setLayout(gp);
@@ -177,6 +182,7 @@ public class MainMenuPanel extends JPanel implements ActionListener, FileIO {
             warning = new JLabel("Please enter a valid name");
             warning.setForeground(Color.RED);
 
+            //Using group layout to set locations for components
             gp.setHorizontalGroup(gp.createSequentialGroup()
                     .addGroup(gp.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(message)
@@ -202,10 +208,9 @@ public class MainMenuPanel extends JPanel implements ActionListener, FileIO {
             warning.setVisible(false);
         }
 
-        public void displayWarning() {
-            warning.setVisible(true);
-        }
-
+        //If ok button is clicked, load a save from the database with the corresponding
+        //username and save name and switch panel to gamePanel
+        //If nameField is empty display warning
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
@@ -213,7 +218,7 @@ public class MainMenuPanel extends JPanel implements ActionListener, FileIO {
                     String name = "";
                     name = nameField.getText();
                     if (name.equals("")) {
-                        displayWarning();
+                        warning.setVisible(true);
                     } else {
                         player = frame.getConnection().loadSave(frame.getUsername(), name);
                         nameField.setText("");
@@ -221,7 +226,7 @@ public class MainMenuPanel extends JPanel implements ActionListener, FileIO {
                         gamePanel = new GamePanel(frame, player);
                         frame.getContPanel().add(gamePanel, "4");
                         frame.getCard().show(frame.getContPanel(), "4");
-                    }
+                    }//If back button is clicked, switch panel to mainMenuPanel
                 } else if (e.getSource() == back) {
                     nameField.setText("");
                     warning.setVisible(false);
